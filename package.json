@@ -1,0 +1,21 @@
+{
+  "name": "coffee-statistics",
+  "version": "0.0.0",
+  "description": "statistics in coffee",
+  "main": "src/coffee-statistics.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/tmcw/coffee-statistics.git"
+  },
+  "keywords": [
+    "statistics",
+    "coffeescript"
+  ],
+  "author": "Tom MacWright <tom@macwright.org>",
+  "license": "PD",
+  "readmeFilename": "README.md",
+  "gitHead": "82f013978cac528dfcaea4cf427465753dddc07f"
+}
