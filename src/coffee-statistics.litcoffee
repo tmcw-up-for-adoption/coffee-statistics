@@ -47,7 +47,7 @@ numbers.
         return null if x.length is 0
         sum(x) / x.length
 
-# # Max
+# Max
 
 This is simply the maximum number in the set.
 
@@ -61,6 +61,40 @@ undefined and is thus made the minimum element in the array
         for a in x
             max = a if a > max or max is undefined
         max
+
+# Min
+
+This is simply the minimum number in the set.
+
+This runs on `O(n)`, linear time in respect to the array
+
+    min = (x) ->
+
+On the first iteration of this loop, min is
+undefined and is thus made the minimum element in the array
+
+        for a in x
+            min = a if a < min or min is undefined
+        min
+
+     sum_squared_deviations = (x) ->
+        return null if x.length <= 1
+
+        mean = ss.mean(x)
+        sum = 0
+
+        for a in x
+            sum += Math.pow(a - mean, 2)
+        sum
+
+# [variance](http://en.wikipedia.org/wiki/Variance)
+
+is the sum of squared deviations from the mean
+
+    sample_variance = (x) ->
+        sum_squared_deviations = sum_squared_deviations(x)
+        return null if sum_squared_deviations is null
+        sum_squared_deviations / x.length - 1
 
 # [Variance](http://en.wikipedia.org/wiki/Variance)
 
