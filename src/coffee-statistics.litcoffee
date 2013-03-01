@@ -140,17 +140,13 @@ array.
 
         last = sorted[0]
 
-store the mode as we find new modes
-
-        mode = null
-
-store how many times we've seen the mode
-
-        max_seen = 0
-
-how many times the current candidate for the mode
+store the mode as we find new modes,
+how many times we've seen the mode,
+and how many times the current candidate for the mode
 has been seen
 
+        mode = null
+        max_seen = 0
         seen_this = 1
 
 end at sorted.length + 1 to fix the case in which the mode is
@@ -216,16 +212,12 @@ null hypothesis can or cannot be rejected.
 
     t_test = (sample, x) ->
 
-The mean of the sample
+The mean of the sample,
+standard deviation of the sample,
+and square root the length of the sample
 
       sample_mean = mean sample
-
-The standard deviation of the sample
-
       sd = standard_deviation sample
-
-Square root the length of the sample
-
       rootN = Math.sqrt sample.length
 
 Compute the known value against the sample,
@@ -285,3 +277,83 @@ with an odd-length list, return the sample value at the index.
 
         else
             return sorted[idx]
+
+# [standard deviation](http://en.wikipedia.org/wiki/Standard_deviation)
+
+is just the square root of the variance.
+
+    sample_standard_deviation = (x) ->
+        return null if x.length <= 1
+        Math.sqrt sample_variance x
+
+# [t-test](http://en.wikipedia.org/wiki/Student's_t-test)
+
+This is to compute a one-sample t-test, comparing the mean
+of a sample to a known value, x.
+
+in this case, we're trying to determine whether the
+population mean is equal to the value that we know, which is `x`
+here. usually the results here are used to look up a
+[p-value](http://en.wikipedia.org/wiki/P-value), which, for
+a certain level of significance, will let you determine that the
+null hypothesis can or cannot be rejected.
+
+    t_test = (sample, x) ->
+
+The mean of the sample,
+The standard deviation of the sample,
+Square root the length of the sample
+
+      sample_mean = mean sample
+      sd = standard_deviation sample
+      rootN = Math.sqrt sample.length
+
+Compute the known value against the sample,
+returning the t value
+
+      (sample_mean - x) / (sd / rootN)
+
+# Mixin
+
+Mixin simple_statistics to the Array native object. This is an optional
+feature that lets you treat simple_statistics as a native feature
+of Javascript.
+
+    mixin = () ->
+        support = !!(Object.defineProperty and Object.defineProperties)
+        throw new Error('without defineProperty, simple-statistics cannot be mixed in') if not support
+
+only methods which work on basic arrays in a single step
+are supported
+
+        arrayMethods = ['median', 'standard_deviation', 'sum',
+            'mean', 'min', 'max', 'quantile', 'geometric_mean']
+
+create a closure with a method name so that a reference
+like `arrayMethods[i]` doesn't follow the loop increment
+
+        wrap = (method) ->
+            return () ->
+
+cast any arguments into an array, since they are natively objects
+make the first argument the array itself,
+and return the result of the ss method
+
+                args = Array.prototype.slice.apply(arguments)
+                args.unshift(this)
+                ss[method].apply(ss, args)
+
+for each array function, define a function off of the Array
+prototype which automatically gets the array as the first
+argument. We use [defineProperty](https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Object/defineProperty)
+because it allows these properties to be non-enumerable:
+`for (var in x)` loops will not run into problems with this
+implementation.
+
+        for method in arrayMethods
+            Object.defineProperty(Array.prototype, method, {
+                value: wrap(method)
+                configurable: true
+                enumerable: false
+                writable: true
+            })
